@@ -1,0 +1,23 @@
+# Local .terraform directories
+.terraform/
+
+# Terraform state files
+*.tfstate
+*.tfstate.*
+
+# Backup files created by Terraform
+*.backup
+
+# Terraform variables files
+*.tfvars
+*.tfvars.json
+
+# Ignore Terraform plan files
+*.tfplan
+
+# Terraform lock file (optional, keep if you don't want to track it)
+.terraform.lock.hcl
+
+# Ignore local state files in case they are being tracked manually
+terraform.tfstate
+terraform.tfstate.backup
