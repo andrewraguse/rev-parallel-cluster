@@ -9,7 +9,7 @@ resource "aws_iam_policy_attachment" "administrators_attach" {
     # Prevent Terraform from modifying Admin group membership
 
     # Ignore changes to the 'users' attribute
-  lifecycle {
-    ignore_changes = [users]
-  }
+    lifecycle {
+      ignore_changes = [users]
+    }
 } 
