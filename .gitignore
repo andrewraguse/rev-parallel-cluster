@@ -14,6 +14,8 @@
 
 # Ignore Terraform plan files
 *.tfplan
+*tfplan
+tfplan
 
 # Terraform lock file (optional, keep if you don't want to track it)
 .terraform.lock.hcl
@@ -21,3 +23,7 @@
 # Ignore local state files in case they are being tracked manually
 terraform.tfstate
 terraform.tfstate.backup
+
+# Ignore virtual environments
+venv/
+
