@@ -26,3 +26,11 @@ terraform.tfstate.backup
 
 # Ignore virtual environments
 venv/
+
+#Ignore generated yaml templates
+generated_cluster.yaml
+
+#Ignore generated key pairs
+*.pem
+id_rsa
+id_rsa.pub

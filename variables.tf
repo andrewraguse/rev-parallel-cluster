@@ -19,3 +19,26 @@ variable "availability_zone" {
   type = string
   default = "us-west-2a"
 }
+
+variable "profile" {
+  description = "The AWS profile where resources will be created"
+  type = string
+  default = null  # Optional default value
+}
+
+variable "parallel_cluster_api_stack_version" {
+  type = string
+  description = "The version of the parallel cluster api"
+  default = "3.10.0" # Optional default value
+}
+
+variable "parallel_cluster_api_stack_name" {
+  type = string
+  description = "The name of the CloudFormation stack used to deploy the ParallelCluster API."
+  default = "ParallelCluster" # Optional default value
+}
+
+variable "parallel_cluster_private_subnet_id" {
+  type = string
+  description = "The subnet id to be used for the parallel cluster"
+}

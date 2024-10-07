@@ -13,24 +13,28 @@ module "s3" {
     terraform_state_s3_bucket_name = var.terraform_state_s3_bucket_name
 }
 
+module "parallel_cluster_api" {
+  source = "./modules/parallel_cluster_api" # Reference to the parallel cluster api main module
+  region = var.region
+  api_stack_name = var.parallel_cluster_api_stack_name
+  api_version = var.parallel_cluster_api_stack_version
+}
+
 module "parallel_cluster" {
   source = "./modules/parallel_cluster" # Reference to the parallel cluster main module
   region = var.region
+  api_stack_name = var.parallel_cluster_api_stack_name
+  api_version = var.parallel_cluster_api_stack_version
+  private_subnet_id = var.parallel_cluster_private_subnet_id
+  cluster_region = var.region
+  profile = var.profile
+
+  # Explicit dependency on the parallel_cluster_api
+  depends_on = [module.parallel_cluster_api]
 }
 
 module "vpc" {
   source = "./modules/vpc" # Reference to the vpc main module
   private_subnet_cidr_block = var.private_subnet_cidr_block
   availability_zone = var.availability_zone
-}
-
-# Step x: Remove this block of code once running terraform init
-terraform {
-  backend "s3" {
-    # Step x.1: Insert custom bucket name (must be unique)
-    bucket = "<insert-terraform-state-s3-bucket>" # Name of your S3 bucket
-    key = "terraform.tfstate" # Path inside the bucket for the state file
-    region = "us-west-2" # AWS region where the bucket is located
-    encrypt = true # Enable encryption
-  }
 }
