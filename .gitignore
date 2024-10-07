@@ -26,4 +26,3 @@ terraform.tfstate.backup
 
 # Ignore virtual environments
 venv/
-
