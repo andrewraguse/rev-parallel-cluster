@@ -13,6 +13,20 @@ module "s3" {
     terraform_state_s3_bucket_name = var.terraform_state_s3_bucket_name
 }
 
+module "cloudwatch" {
+  source = "./modules/cloudwatch"
+  account_id = data.aws_caller_identity.current.account_id
+  aws_profile = var.profile
+  sns_alert_emails = var.sns_alert_emails
+  spending_alert_threshold = var.spending_alert_threshold
+}
+
+module "budgets" {
+  source = "./modules/aws_budgets"
+  alert_emails = var.sns_alert_emails
+  monthly_spend_limit = var.monthly_spend_limit
+}
+
 module "parallel_cluster_api" {
   source = "./modules/parallel_cluster_api" # Reference to the parallel cluster api main module
   region = var.region

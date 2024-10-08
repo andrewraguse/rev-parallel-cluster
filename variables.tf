@@ -42,3 +42,18 @@ variable "parallel_cluster_private_subnet_id" {
   type = string
   description = "The subnet id to be used for the parallel cluster"
 }
+
+variable "sns_alert_emails" {
+  type = list(string)
+  description = "The email to send alarm notifications to"
+}
+
+variable "spending_alert_threshold" {
+  type = number
+  description = "The spending limit in USD to alarm on."
+}
+
+variable "monthly_spend_limit" {
+  type = number
+  description = "The maximum amount that the account should spend in a month."
+}

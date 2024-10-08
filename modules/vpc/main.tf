@@ -1,7 +1,3 @@
-data "aws_vpc" "default" {
-  default = true
-}
-
 resource "aws_subnet" "private_subnet" {
   vpc_id            = data.aws_vpc.default.id
   cidr_block        = var.private_subnet_cidr_block
