@@ -17,3 +17,8 @@ output "autoscaling_policy" {
     value = aws_iam_policy.autoscaling_policy.arn
     description = "Allow autoscaling permissions"
 }
+
+output "pass_role_policy" {
+  value = aws_iam_policy.pass_role_policy.arn
+    description = "Allow PassRole action"
+}

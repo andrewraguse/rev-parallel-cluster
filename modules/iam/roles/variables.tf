@@ -17,3 +17,9 @@ variable "autoscaling_policy" {
     type = string
     description = "Allow autoscaling permissions"
 }
+
+variable "pass_role_policy" {
+    type = string
+    description = "Allow for iam passrole"
+  
+}

@@ -18,4 +18,5 @@ module "iam_roles" {
     ec2_describe_policy = module.iam_policies.ec2_describe_policy
     autoscaling_policy = module.iam_policies.autoscaling_policy
     cloudformation_policy = module.iam_policies.cloudformation_policy
+    pass_role_policy = module.iam_policies.pass_role_policy
 }

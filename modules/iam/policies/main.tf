@@ -9,7 +9,7 @@ resource "aws_iam_policy" "s3_post_install_bucket_read_policy" {
       {
         Action   = "s3:GetObject",
         Effect   = "Allow",
-        Resource = "arn:aws:s3::${var.post_install_scripts_bucket_name}/*"  # Restrict to specific bucket
+        Resource = "arn:aws:s3:::${var.post_install_scripts_bucket_name}/*" # Restrict to specific bucket
       }
     ]
   })
@@ -80,6 +80,26 @@ resource "aws_iam_policy" "autoscaling_policy" {
           "autoscaling:DeleteAutoScalingGroup"
         ],
         Resource = "*"
+      }
+    ]
+  })
+}
+
+# IAM policy for PassRole action
+resource "aws_iam_policy" "pass_role_policy" {
+  name        = "PassRolePolicy"
+  description = "Policy to allow EC2 to pass roles"
+
+  policy = jsonencode({
+    Version = "2012-10-17",
+    Statement = [
+      {
+        Effect   = "Allow",
+        Action   = "iam:PassRole",
+       Resource = [
+          "arn:${data.aws_partition.current.partition}:iam::${data.aws_caller_identity.current.account_id}:role/ParallelClusterEC2Role", # EC2 Role
+          "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/ParallelClusterLambdaRole-*" # Lambda Role (dynamically targeting the lambda role)
+        ]
       }
     ]
   })
