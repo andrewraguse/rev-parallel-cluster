@@ -4,16 +4,6 @@ variable "region" {
   default     = "us-west-2"  # Optional default value
 }
 
-variable "terraform_state_s3_bucket_name" {
-  description = "Value for s3 bucket to store the terraform state configs"
-  type = string
-}
-
-variable "private_subnet_cidr_block" {
-  description = "Value for the private subnet cidr block"
-  type = string
-}
-
 variable "availability_zone" {
   description = "Availability zone to be used for hosting the parallel cluser subnets"
   type = string
@@ -25,6 +15,30 @@ variable "profile" {
   type = string
   default = null  # Optional default value
 }
+
+# vpc variables
+
+variable "private_subnet_cidr_block" {
+  description = "Value for the private subnet cidr block"
+  type = string
+  sensitive = true
+}
+
+# s3 bucket variables
+
+variable "terraform_state_s3_bucket_name" {
+  description = "Value for s3 bucket to store the terraform state configs"
+  type = string
+  sensitive = true
+}
+
+variable "post_install_scripts_bucket_name" {
+  description = "Value for s3 bucket to store post install scripts used for docker containers"
+  type = string
+  sensitive = true
+}
+
+# parallel cluster variables
 
 variable "parallel_cluster_api_stack_version" {
   type = string
@@ -41,7 +55,10 @@ variable "parallel_cluster_api_stack_name" {
 variable "parallel_cluster_private_subnet_id" {
   type = string
   description = "The subnet id to be used for the parallel cluster"
+  sensitive = true
 }
+
+# budget/cloudwatch variables
 
 variable "sns_alert_emails" {
   type = list(string)
@@ -57,3 +74,18 @@ variable "monthly_spend_limit" {
   type = number
   description = "The maximum amount that the account should spend in a month."
 }
+
+# HSDS variables
+
+variable "hs_username" {
+  description = "The username for the HSDS service"
+  type        = string
+  sensitive   = true  # Mark this variable as sensitive
+}
+
+variable "hs_password" {
+  description = "The password for the HSDS service"
+  type        = string
+  sensitive   = true  # Mark this variable as sensitive
+}
+

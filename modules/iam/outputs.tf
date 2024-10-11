@@ -8,3 +8,8 @@ output "iam_user_names" {
   value = module.iam_users.iam_user_names  # Expose the output from the iam_users module
   description = "iam user names for all users"
 }
+
+output "pcluster_ec2_role" {
+    value = module.iam_roles.pcluster_ec2_role
+    description = "Role attached to parallel cluster ec2 instances"
+}

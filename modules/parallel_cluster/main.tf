@@ -1,12 +1,3 @@
-data "template_file" "cluster_config" {
-  template = file("${path.module}/config/rev_cluster_config.yaml.tpl")
-  vars = {
-    subnet = var.private_subnet_id
-    region = var.region
-    ssh_key = aws_key_pair.head_node_ssh_key.key_name # Pass the generated key name into the YAML
-  }
-}
-
 resource "local_file" "cluster_yaml" {
   filename = "${path.module}/generated_cluster.yaml"
   content  = data.template_file.cluster_config.rendered
@@ -15,6 +6,14 @@ resource "local_file" "cluster_yaml" {
 resource "aws_key_pair" "head_node_ssh_key" {
   key_name   = "head_node_ssh_key" # The name of the key pair
   public_key = file("~/.ssh/id_rsa.pub") # Safely load the public key from your local system
+}
+
+module "hsds" {
+  source = "./hsds"
+  region = var.region
+  post_install_bucket = var.post_install_bucket
+  hs_username = var.hs_username
+  hs_password = var.hs_password
 }
 
 module "pcluster" {
@@ -26,10 +25,12 @@ module "pcluster" {
     api_version = var.api_version
     deploy_pcluster_api = false
 
-    # Reference the generated YAML config file
+    # Use the content of the YAML file
     cluster_configs = {
-        reVCluster : {
-            configuration : "${path.module}/generated_cluster.yaml"
-        }
+      reVCluster : {
+        configuration = "${local_file.cluster_yaml.filename}"
+      }
     }
+
+    depends_on = [local_file.cluster_yaml]
 }

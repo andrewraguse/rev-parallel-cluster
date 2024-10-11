@@ -1,5 +1,6 @@
 module "iam" {
     source = "./modules/iam"  # Reference to IAM main module
+    post_install_scripts_bucket_name = var.post_install_scripts_bucket_name
 }
 
 module "secrets_manager" {
@@ -11,6 +12,7 @@ module "secrets_manager" {
 module "s3" {
     source = "./modules/s3" # Reference to the s3 main module
     terraform_state_s3_bucket_name = var.terraform_state_s3_bucket_name
+    post_install_scripts_bucket_name = var.post_install_scripts_bucket_name
 }
 
 module "cloudwatch" {
@@ -42,8 +44,12 @@ module "parallel_cluster" {
   private_subnet_id = var.parallel_cluster_private_subnet_id
   cluster_region = var.region
   profile = var.profile
+  hs_username = var.hs_username
+  hs_password = var.hs_password
+  post_install_bucket = var.post_install_scripts_bucket_name
+  pcluster_ec2_role = module.iam.pcluster_ec2_role
 
-  # Explicit dependency on the parallel_cluster_api
+  # Explicit dependencies
   depends_on = [module.parallel_cluster_api]
 }
 

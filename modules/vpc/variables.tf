@@ -1,6 +1,7 @@
 variable "private_subnet_cidr_block" {
   description = "Value for the public subnet cidr block"
   type = string
+  sensitive = true
 }
 
 variable "availability_zone" {
