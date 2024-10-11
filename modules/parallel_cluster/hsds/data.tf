@@ -14,6 +14,6 @@ data "template_file" "post_install" {
 
   vars = {
     ecr_repository_url = aws_ecr_repository.hsds.repository_url
-    AWS_REGION         = var.region
+    AWS_REGION = var.region
   }
 }

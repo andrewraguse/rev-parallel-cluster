@@ -1,7 +1,8 @@
+# Local variable to hold cluster configurations
 locals {
   cluster_configs = {
     reVCluster : {
-      configuration : "${path.module}/generated_cluster.yaml"
+      configuration = "${path.module}/generated_cluster.yaml"  # Path to the generated cluster configuration file
     }
   }
 }

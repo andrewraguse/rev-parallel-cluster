@@ -26,6 +26,6 @@ resource "null_resource" "build_and_push_docker" {
 # Upload the rendered script to S3 for parallel cluster to use
 resource "aws_s3_object" "post_install_script" {
   bucket = var.post_install_bucket
-  key    = "hsds_post_install.sh"
+  key = "hsds_post_install.sh"
   content = data.template_file.post_install.rendered
 }
