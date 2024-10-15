@@ -52,6 +52,7 @@ resource "aws_iam_policy" "cloudformation_policy" {
         Effect = "Allow",
         Action = [
           "cloudformation:DescribeStacks",
+          "cloudformation:DescribeStackResource",
           "cloudformation:ListStacks",
           "cloudformation:CreateStack",
           "cloudformation:UpdateStack",
