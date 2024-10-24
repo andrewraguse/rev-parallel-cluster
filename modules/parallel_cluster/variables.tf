@@ -23,6 +23,13 @@ variable "private_subnet_id" {
  sensitive = true
 }
 
+# Variable for the subnet ID used for ParallelCluster head node
+variable "public_subnet_id" {
+ type = string
+ description = "The id of the subnet to be used for the ParallelCluster head node."
+ sensitive = true
+}
+
 # Variable for the region where the clusters will be deployed
 variable "cluster_region" {
  description = "The region the clusters will be deployed in."

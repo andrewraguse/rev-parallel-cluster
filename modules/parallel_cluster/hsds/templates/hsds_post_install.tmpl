@@ -1,14 +1,27 @@
 #!/bin/bash
+# Install device-mapper if not already installed
+sudo yum install -y device-mapper
+
 # Install Docker (if not installed)
 sudo yum update -y
 sudo amazon-linux-extras install docker -y
 sudo service docker start
 
-# Log into AWS ECR
-aws ecr get-login-password --region ${AWS_REGION} | docker login --username AWS --password-stdin ${ecr_repository_url}
+# Add ec2-user to the Docker group to avoid needing sudo for Docker commands
+sudo usermod -aG docker ec2-user
+newgrp docker
 
-# Pull the HSDS Docker image
-docker pull ${ecr_repository_url}:latest
+# Create ~/.hscfg file with hs_endpoint and hs_bucket for HSDS
+echo "Creating ~/.hscfg file..."
+echo "hs_endpoint = http://localhost:5101" > /home/ec2-user/.hscfg
+echo "hs_bucket = nrel-pds-hsds" >> /home/ec2-user/.hscfg
+sudo chown ec2-user:ec2-user /home/ec2-user/.hscfg  # Make sure ec2-user owns the file
+
+# Log into AWS ECR (with sudo to ensure Docker has the correct credentials)
+sudo aws ecr get-login-password --region ${AWS_REGION} | sudo docker login --username AWS --password-stdin ${ecr_repository_url}
+
+# Pull the HSDS Docker image for amd64 architecture
+sudo docker pull ${ecr_repository_url}:amd64
 
 # Run the HSDS Docker container
-docker run -d -p 5101:5101 ${ecr_repository_url}:latest
+sudo docker run -d -p 5101:5101 ${ecr_repository_url}:amd64

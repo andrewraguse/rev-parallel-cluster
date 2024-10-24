@@ -25,6 +25,10 @@ module "cloudwatch" {
   aws_profile = var.profile # AWS profile for authentication
   sns_alert_emails = var.sns_alert_emails # List of email addresses to receive billing alerts
   spending_alert_threshold = var.spending_alert_threshold # Threshold for sending billing/spending alerts
+
+  providers = {
+    aws = aws.us_east_1
+  }
 }
 
 # Budgets module: Creates and manages AWS budgets for cost control, including spending alerts
@@ -49,6 +53,7 @@ module "parallel_cluster" {
   api_stack_name = var.parallel_cluster_api_stack_name # Name of the API stack
   api_version = var.parallel_cluster_api_stack_version # API version
   private_subnet_id = var.parallel_cluster_private_subnet_id # Subnet for cluster instances
+  public_subnet_id = var.parallel_cluster_public_subnet_id # Subnet for head
   cluster_region = var.region # Region for the cluster
   profile = var.profile # AWS profile for the cluster
   hs_username = var.hs_username # Username for HSDS configuration

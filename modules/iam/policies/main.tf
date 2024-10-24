@@ -98,7 +98,7 @@ resource "aws_iam_policy" "pass_role_policy" {
         Effect = "Allow",
         Action = "iam:PassRole",
         Resource = [
-          "arn:${data.aws_partition.current.partition}:iam::${data.aws_caller_identity.current.account_id}:role/ParallelClusterEC2Role", # EC2 Role
+          "arn:${data.aws_partition.current.partition}:iam::${data.aws_caller_identity.current.account_id}:role/revcluster-EC2Role", # EC2 Role
           "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/ParallelClusterLambdaRole-*" # Lambda Role (dynamically targeting the lambda role)
         ]
       }

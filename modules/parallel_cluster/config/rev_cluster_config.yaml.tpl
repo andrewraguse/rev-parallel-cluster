@@ -4,7 +4,7 @@ Image:
 HeadNode:
   InstanceType: t2.large
   Networking:
-    SubnetId: ${subnet}
+    SubnetId: ${public_subnet_id}
   Ssh:
     KeyName: ${ssh_key}
   Iam:
@@ -17,14 +17,15 @@ Scheduling:
       CapacityType: ONDEMAND
       Networking:
         SubnetIds:
-          - ${subnet}
+          - ${public_subnet_id}
+        AssignPublicIp: true
       Iam:
         InstanceRole: ${pcluster_ec2_role}
       ComputeResources:
-        - Name: compute-resource-1
+        - Name: queue1
           InstanceType: c5.2xlarge
-          MinCount: 0
-          MaxCount: 2
+          MinCount: 1
+          MaxCount: 100
       CustomActions:
         OnNodeConfigured:
           Script: s3://${post_install_bucket}/hsds_post_install.sh

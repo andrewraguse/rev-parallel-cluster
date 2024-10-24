@@ -5,6 +5,14 @@ provider "aws" {
     profile = var.profile # AWS profile to authenticate (from AWS credentials)
 }
 
+# Provider configuration for AWS in the US East (N. Virginia) region
+# This specific region is required for creating CloudWatch billing alarms,
+# as AWS billing metrics are only available in this region.
+provider "aws" {
+  alias  = "us_east_1"  # Alias for using this provider configuration in other resources
+  region = "us-east-1"   # Set the region to US East (N. Virginia)
+}
+
 # AWS ParallelCluster provider: Configures the ParallelCluster provider.
 # This is used for managing AWS ParallelCluster resources via Terraform.
 provider "aws-parallelcluster" {

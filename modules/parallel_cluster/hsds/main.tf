@@ -3,22 +3,19 @@ resource "aws_ecr_repository" "hsds" {
   name = "hsds-server"
 }
 
-# Execute the local-exec provisioner to generate the file and build Docker image
+# Execute the local-exec provisioner to generate the file and build Docker image for amd64
 resource "null_resource" "build_and_push_docker" {
   provisioner "local-exec" {
     command = <<EOT
-      # Write the generated .hscfg file to the directory
-      echo "${data.template_file.hscfg.rendered}" > ${path.module}/.hscfg
-
-      # Build the Docker image with the generated .hscfg file
-      docker build -t hsds-server ${path.module}
+      # Build the Docker image with the existing .hscfg file for amd64 platform
+      docker buildx build --platform linux/amd64 -t hsds-server ${path.module}
 
       # Log into AWS ECR
       aws ecr get-login-password --region us-west-2 | docker login --username AWS --password-stdin ${aws_ecr_repository.hsds.repository_url}
 
-      # Tag and push the Docker image to ECR
-      docker tag hsds-server:latest ${aws_ecr_repository.hsds.repository_url}:latest
-      docker push ${aws_ecr_repository.hsds.repository_url}:latest
+      # Tag and push the Docker image to ECR for amd64
+      docker tag hsds-server:latest ${aws_ecr_repository.hsds.repository_url}:amd64
+      docker push ${aws_ecr_repository.hsds.repository_url}:amd64
     EOT
   }
 }

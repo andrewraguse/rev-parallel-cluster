@@ -1,6 +1,7 @@
 # IAM role for ParallelCluster EC2 instances
 resource "aws_iam_role" "pcluster_ec2_role" {
-  name = "ParallelClusterEC2Role"
+  name = "revcluster-EC2Role"
+  
   assume_role_policy = jsonencode({
     Version = "2012-10-17",
     Statement = [
@@ -13,6 +14,18 @@ resource "aws_iam_role" "pcluster_ec2_role" {
       }
     ]
   })
+}
+
+# Attach the AmazonEC2ContainerRegistryFullAccess policy to the role
+resource "aws_iam_role_policy_attachment" "pcluster_ec2_role_ecr_policy" {
+  role       = aws_iam_role.pcluster_ec2_role.name
+  policy_arn = "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryFullAccess"
+}
+
+# Attach the AmazonS3FullAccess policy to the role
+resource "aws_iam_role_policy_attachment" "pcluster_ec2_role_s3_policy" {
+  role       = aws_iam_role.pcluster_ec2_role.name
+  policy_arn = "arn:aws:iam::aws:policy/AmazonS3FullAccess"
 }
 
 # Attach the S3 read-only policy to the EC2 role

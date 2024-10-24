@@ -30,7 +30,7 @@ module "pcluster" {
 
   # Reference the YAML configuration file
   cluster_configs = {
-    reVCluster : {
+    revcluster : {
       configuration = "${local_file.cluster_yaml.filename}"
     }
   }

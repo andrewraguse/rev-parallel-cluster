@@ -67,6 +67,13 @@ variable "parallel_cluster_private_subnet_id" {
   sensitive = true
 }
 
+# Subnet ID for the ParallelCluster head node
+variable "parallel_cluster_public_subnet_id" {
+  type = string
+  description = "The subnet ID to be used for the ParallelCluster head node"
+  sensitive = true
+}
+
 # Budget and CloudWatch variables
 
 # List of emails for SNS alerts

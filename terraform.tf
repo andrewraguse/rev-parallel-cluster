@@ -6,6 +6,10 @@ terraform {
       source="aws-tf/aws-parallelcluster"
       version="1.0.0"
     }
+     aws = {
+      source  = "hashicorp/aws"
+      version = "~> .0"  # Adjust this version according to your needs
+    }
   }
 }
 
@@ -16,7 +20,7 @@ terraform {
 terraform {
   backend "s3" {
     # S3 bucket configuration to store the state file
-    bucket="<insert-your-bucket-name-here>" # Name of your S3 bucket
+    bucket="insert-your-bucket-name" # Name of your S3 bucket
     key="terraform.tfstate" # Path inside the bucket for the state file
     region="us-west-2" # AWS region where the bucket is located
     encrypt=true # Enable encryption
