@@ -12,10 +12,10 @@ sudo usermod -aG docker ec2-user
 newgrp docker
 
 # Create ~/.hscfg file with hs_endpoint and hs_bucket for HSDS
-echo "Creating ~/.hscfg file..."
-echo "hs_endpoint = http://localhost:5101" > /home/ec2-user/.hscfg
-echo "hs_bucket = nrel-pds-hsds" >> /home/ec2-user/.hscfg
-sudo chown ec2-user:ec2-user /home/ec2-user/.hscfg  # Make sure ec2-user owns the file
+echo "Creating ~/.hscfg file in the user's home directory..."
+echo "hs_endpoint = http://localhost:5101" | sudo tee ~/.hscfg > /dev/null
+echo "hs_bucket = nrel-pds-hsds" | sudo tee -a ~/.hscfg > /dev/null
+sudo chown $USER:$USER ~/.hscfg  # Ensure the current user owns the file
 
 # Log into AWS ECR (with sudo to ensure Docker has the correct credentials)
 sudo aws ecr get-login-password --region ${AWS_REGION} | sudo docker login --username AWS --password-stdin ${ecr_repository_url}

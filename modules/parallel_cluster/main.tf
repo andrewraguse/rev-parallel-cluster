@@ -15,8 +15,6 @@ module "hsds" {
   source = "./hsds"
   region = var.region
   post_install_bucket = var.post_install_bucket
-  hs_username = var.hs_username
-  hs_password = var.hs_password
 }
 
 # ParallelCluster module configuration

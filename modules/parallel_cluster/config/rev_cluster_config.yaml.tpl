@@ -4,12 +4,14 @@ Image:
 HeadNode:
   InstanceType: t2.large
   Networking:
-    SubnetId: ${public_subnet_id}
+    SubnetId: ${subnet_id}
   Ssh:
     KeyName: ${ssh_key}
   Iam:
     AdditionalIamPolicies:
       - Policy: arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore
+      - Policy: ${pass_and_attach_role_policy}
+
 Scheduling:
   Scheduler: slurm
   SlurmQueues:
@@ -17,10 +19,14 @@ Scheduling:
       CapacityType: ONDEMAND
       Networking:
         SubnetIds:
-          - ${public_subnet_id}
+          - ${subnet_id}
         AssignPublicIp: true
       Iam:
-        InstanceRole: ${pcluster_ec2_role}
+        AdditionalIamPolicies:
+          - Policy: arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore
+          - Policy: arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly
+          - Policy: ${s3_readonly_post_install_scripts_policy}
+          - Policy: ${pass_and_attach_role_policy}
       ComputeResources:
         - Name: queue1
           InstanceType: c5.2xlarge

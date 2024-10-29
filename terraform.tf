@@ -8,14 +8,15 @@ terraform {
     }
      aws = {
       source  = "hashicorp/aws"
-      version = "~> .0"  # Adjust this version according to your needs
+      version = "~> 5.0"  # Adjust this version according to your needs
     }
   }
 }
 
 # Terraform backend configuration block: Specifies the S3 backend for storing the state file.
-# Step 1: This block should be uncommented out after running `terraform init` and `terraform apply` once
+# This block should be uncommented out after running `terraform init` and `terraform apply` once
 # to wait for the s3 bucket creation
+# RemoveComment
 /*
 terraform {
   backend "s3" {

@@ -47,27 +47,20 @@ module "parallel_cluster_api" {
 }
 
 # Parallel Cluster module: Provisions the AWS ParallelCluster for HPC workloads
+/*
 module "parallel_cluster" {
   source = "./modules/parallel_cluster" # Reference to the ParallelCluster main module
   region = var.region # AWS region for the cluster
   api_stack_name = var.parallel_cluster_api_stack_name # Name of the API stack
   api_version = var.parallel_cluster_api_stack_version # API version
-  private_subnet_id = var.parallel_cluster_private_subnet_id # Subnet for cluster instances
-  public_subnet_id = var.parallel_cluster_public_subnet_id # Subnet for head
+  subnet_id = var.subnet_id # Subnet for head
   cluster_region = var.region # Region for the cluster
   profile = var.profile # AWS profile for the cluster
-  hs_username = var.hs_username # Username for HSDS configuration
-  hs_password = var.hs_password # Password for HSDS configuration
   post_install_bucket = var.post_install_scripts_bucket_name # S3 bucket for post-install scripts
-  pcluster_ec2_role = module.iam.pcluster_ec2_role # IAM role for EC2 instances in the cluster
+  pass_and_attach_role_policy = module.iam.pass_and_attach_role_policy # Pass role policy for the head node
+  s3_readonly_post_install_scripts_policy = module.iam.s3_readonly_post_install_scripts_policy # s3 read policy for compute nodes
 
   # Explicit dependencies to ensure the API stack is created before the cluster
   depends_on = [module.parallel_cluster_api]
 }
-
-# VPC module: Manages the virtual private cloud (VPC) and associated resources such as subnets
-module "vpc" {
-  source = "./modules/vpc" # Reference to the VPC main module
-  private_subnet_cidr_block = var.private_subnet_cidr_block # CIDR block for the private subnet
-  availability_zone = var.availability_zone # Availability zone for the VPC
-}
+*/

@@ -1,17 +1,3 @@
-# Variable for HSDS username
-variable "hs_username" {
-  description = "The username for the HSDS service"
-  type = string
-  sensitive = true
-}
-
-# Variable for HSDS password
-variable "hs_password" {
-  description = "The password for the HSDS service"
-  type = string
-  sensitive = true
-}
-
 # Variable for the AWS region
 variable "region" {
   description = "The AWS region to deploy the resources."

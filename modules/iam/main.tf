@@ -18,9 +18,6 @@ module "iam_policies" {
 # Module for managing IAM roles
 module "iam_roles" {
   source = "./roles"
-  post_install_scripts_read_bucket_policy = module.iam_policies.s3_post_install_bucket_read_policy  # Pass policy for post install scripts
   ec2_describe_policy = module.iam_policies.ec2_describe_policy  # Pass EC2 describe policy
-  autoscaling_policy = module.iam_policies.autoscaling_policy  # Pass autoscaling policy
-  cloudformation_policy = module.iam_policies.cloudformation_policy  # Pass CloudFormation policy
-  pass_role_policy = module.iam_policies.pass_role_policy  # Pass PassRole policy
+  pass_and_attach_role_policy = module.iam_policies.pass_and_attach_role_policy  # Pass PassRole policy
 }
