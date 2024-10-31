@@ -3,12 +3,6 @@ module "iam_groups" {
   source = "./groups"
 }
 
-# Module for managing IAM users
-module "iam_users" {
-  source = "./users" 
-  administrators_group_name = module.iam_groups.administrators_group_name  # Pass the output from the groups module
-}
-
 # Module for managing IAM policies
 module "iam_policies" {
   source = "./policies"  # Reference to policies module

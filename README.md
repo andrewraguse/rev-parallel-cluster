@@ -198,18 +198,22 @@ post_install_scripts_bucket_name = "<insert-bucket-name-post-install>"
 
 1. **Initialize and Apply Terraform**:
 
-   - Run:
-     ```bash
+   Run:
+
+   ```bash
      terraform init
      terraform apply
-     ```
+   ```
 
 2. **Remove Placeholder Comments**:  
    Some configurations may require a second initialization. After the initial setup, remove any comments labeled `# RemoveComment` in your configuration, then re-run:
+
    ```bash
    terraform init
    terraform apply
    ```
+
+   Replace this line here https://github.com/switchbox-data/rev-parallel-cluster/blob/main/terraform.tf#L24 with the terraform_state_s3_bucket_name you added in the terraform.tfvars file. This is needed to store the terraform state in a secure private s3 bucket
 
 If you encounter an error like "`Provider produced inconsistent final plan`," try re-running the command, as some resources may need an additional setup step.
 

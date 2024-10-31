@@ -4,13 +4,6 @@ module "iam" {
     post_install_scripts_bucket_name = var.post_install_scripts_bucket_name # Passes the S3 bucket name to store post-install scripts
 }
 
-# Secrets Manager module: Manages the creation and storage of secrets (e.g., IAM access keys)
-module "secrets_manager" {
-    source = "./modules/secrets_manager" # Reference to Secrets Manager main module
-    iam_access_keys = module.iam.iam_access_keys # Retrieves IAM access keys from the IAM module
-    iam_user_names = module.iam.iam_user_names # Retrieves IAM usernames from the IAM module
-}
-
 # S3 module: Handles the creation and configuration of S3 buckets for Terraform state and post-install scripts
 module "s3" {
     source = "./modules/s3" # Reference to the S3 main module
@@ -47,6 +40,7 @@ module "parallel_cluster_api" {
 }
 
 # Parallel Cluster module: Provisions the AWS ParallelCluster for HPC workloads
+# RemoveComment
 /*
 module "parallel_cluster" {
   source = "./modules/parallel_cluster" # Reference to the ParallelCluster main module
