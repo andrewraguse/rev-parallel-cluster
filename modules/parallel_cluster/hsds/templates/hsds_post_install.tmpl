@@ -1,4 +1,5 @@
 #!/bin/bash
+
 # Install device-mapper if not already installed
 sudo yum install -y device-mapper
 
@@ -7,21 +8,54 @@ sudo yum update -y
 sudo amazon-linux-extras install docker -y
 sudo service docker start
 
-# Add ec2-user to the Docker group to avoid needing sudo for Docker commands
-sudo usermod -aG docker ec2-user
-newgrp docker
+# Install Docker Compose
+sudo curl -L "https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+sudo chmod +x /usr/local/bin/docker-compose
 
-# Create ~/.hscfg file with hs_endpoint and hs_bucket for HSDS
-echo "Creating ~/.hscfg file in the user's home directory..."
-echo "hs_endpoint = http://localhost:5101" | sudo tee ~/.hscfg > /dev/null
-echo "hs_bucket = nrel-pds-hsds" | sudo tee -a ~/.hscfg > /dev/null
-sudo chown $USER:$USER ~/.hscfg  # Ensure the current user owns the file
+# Clone the HSDS repository
+git clone https://github.com/HDFGroup/hsds.git ~/hsds || {
+    echo "Failed to clone HSDS repository. Please check permissions."
+    exit 1
+}
 
-# Log into AWS ECR (with sudo to ensure Docker has the correct credentials)
-sudo aws ecr get-login-password --region ${AWS_REGION} | sudo docker login --username AWS --password-stdin ${ecr_repository_url}
+# Copy the default password file
+cp ~/hsds/admin/config/passwd.default ~/hsds/admin/config/passwd.txt
 
-# Pull the HSDS Docker image for amd64 architecture
-sudo docker pull ${ecr_repository_url}:amd64
+# Create HSDS configuration content
+HSCFG_CONTENT="\
+hs_endpoint = http://localhost:5101\n\
+hs_username = admin\n\
+hs_password = admin\n\
+hs_api_key = None\n\
+hs_bucket = nrel-pds-hsds"
 
-# Run the HSDS Docker container
-sudo docker run -d -p 5101:5101 ${ecr_repository_url}:amd64
+# Define the .hscfg locations and write the configuration
+echo -e "$HSCFG_CONTENT" | sudo tee "/home/$USER/.hscfg" > /dev/null
+echo -e "$HSCFG_CONTENT" | sudo tee "/home/ec2-user/.hscfg" > /dev/null
+echo -e "$HSCFG_CONTENT" | sudo tee "/home/ssm-user/.hscfg" > /dev/null
+echo -e "$HSCFG_CONTENT" | sudo tee "/root/.hscfg" > /dev/null
+echo -e "$HSCFG_CONTENT" | sudo tee "/etc/hscfg" > /dev/null
+
+# Set permissions for .hscfg
+sudo chown $USER:$USER "/home/$USER/.hscfg"
+sudo chown ec2-user:ec2-user "/home/ec2-user/.hscfg"
+sudo chown ssm-user:ssm-user "/home/ssm-user/.hscfg"
+sudo chown root:root "/root/.hscfg"
+sudo chmod 644 /etc/hscfg
+
+# Create the directory for the override file
+mkdir -p ~/hsds/admin/config  # Create the directory if it doesn't exist
+
+# Create the override.yml content
+OVERRIDE_YML_CONTENT="\
+aws_s3_no_sign_request: true\n\
+max_task_count: 200"
+
+# Write the override.yml file
+echo -e "$OVERRIDE_YML_CONTENT" | sudo tee ~/hsds/admin/config/override.yml > /dev/null
+
+# Download and run the start_hsds.sh script from S3
+aws s3 cp s3://${post_install_bucket_name}/runall_custom.sh ~/hsds/
+aws s3 cp s3://${post_install_bucket_name}/start_hsds.sh ~/
+chmod +x ~/start_hsds.sh
+~/start_hsds.sh

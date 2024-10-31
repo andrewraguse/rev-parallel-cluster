@@ -19,15 +19,6 @@ variable "profile" {
   default = null  # Optional default value
 }
 
-# VPC variables
-
-# CIDR block for the private subnet
-variable "private_subnet_cidr_block" {
-  description = "Value for the private subnet CIDR block"
-  type = string
-  sensitive = true
-}
-
 # S3 bucket variables
 
 # S3 bucket for Terraform state storage
@@ -60,15 +51,8 @@ variable "parallel_cluster_api_stack_name" {
   default = "ParallelCluster"  # Optional default value
 }
 
-# Subnet ID for the ParallelCluster
-variable "parallel_cluster_private_subnet_id" {
-  type = string
-  description = "The subnet ID to be used for the ParallelCluster"
-  sensitive = true
-}
-
 # Subnet ID for the ParallelCluster head node
-variable "parallel_cluster_public_subnet_id" {
+variable "subnet_id" {
   type = string
   description = "The subnet ID to be used for the ParallelCluster head node"
   sensitive = true
@@ -92,20 +76,4 @@ variable "spending_alert_threshold" {
 variable "monthly_spend_limit" {
   type = number
   description = "The maximum amount that the account should spend in a month."
-}
-
-# HSDS service variables
-
-# Username for the HSDS service
-variable "hs_username" {
-  description = "The username for the HSDS service"
-  type = string
-  sensitive = true  # Mark this variable as sensitive
-}
-
-# Password for the HSDS service
-variable "hs_password" {
-  description = "The password for the HSDS service"
-  type = string
-  sensitive = true  # Mark this variable as sensitive
 }

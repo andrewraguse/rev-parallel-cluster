@@ -3,7 +3,6 @@ data "template_file" "post_install" {
   template = file("${path.module}/templates/hsds_post_install.tmpl")
 
   vars = {
-    ecr_repository_url = aws_ecr_repository.hsds.repository_url
-    AWS_REGION = var.region
+    post_install_bucket_name = var.post_install_bucket
   }
 }

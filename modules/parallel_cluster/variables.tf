@@ -35,20 +35,6 @@ variable "profile" {
  description = "The AWS profile used to deploy the clusters."
 }
 
-# Variable for the username for the HSDS service
-variable "hs_username" {
- description = "The username for the HSDS service"
- type = string
- sensitive = true  # Mark this variable as sensitive
-}
-
-# Variable for the password for the HSDS service
-variable "hs_password" {
- description = "The password for the HSDS service"
- type = string
- sensitive = true # Mark this variable as sensitive
-}
-
 # Variable for the bucket name used to store the post install scripts
 variable "post_install_bucket" {
  description = "The bucket name used to store the post_install scripts"
