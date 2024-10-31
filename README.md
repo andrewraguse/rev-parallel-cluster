@@ -291,7 +291,7 @@ Once single-node functionality is verified, proceed with the multi-node example:
 
 ```bash
 cd ../example-2
-reV pipeline config_pipeline.json
+reV pipeline config_pipeline.json --monitor
 ```
 
 - **Scaling Nodes**: If only one node is active, other nodes may take time to initialize. Monitor using `squeue`.
