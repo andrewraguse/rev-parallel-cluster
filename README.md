@@ -89,51 +89,67 @@ To monitor costs and usage within your account:
      git clone https://github.com/switchbox-data/rev-parallel-cluster.git
      ```
 
+### **1. Install AWS CLI**
+
+#### macOS:
+
+1. **Install AWS CLI** using Homebrew:
+
+   ```bash
+   brew install awscli
+   ```
+
+2. **Configure AWS CLI** with your credentials:
+   ```bash
+   aws configure
+   ```
+   Follow the prompts to enter your **Access Key ID**, **Secret Access Key**, **Region**, and **Output Format**.
+
+#### Windows:
+
+1. **Download the AWS CLI installer** from the [official site](https://aws.amazon.com/cli/) and run it.
+2. After installation, open a terminal (PowerShell or Command Prompt) and run:
+   ```powershell
+   aws configure
+   ```
+   Follow the prompts to set up your **Access Key ID**, **Secret Access Key**, **Region**, and **Output Format**.
+
 ---
 
-### 3. Installing Required Tools
+### **2. Install Terraform**
 
-**Install Homebrew (MacOS only)**:  
-If Homebrew isn’t installed, run the following command to set it up:
+#### macOS:
+
+1. **Install Terraform** using Homebrew:
+
+   ```bash
+   brew install terraform
+   ```
+
+2. **Verify** the installation:
+   ```bash
+   terraform -version
+   ```
+
+#### Windows:
+
+1. **Download Terraform** from the [official site](https://www.terraform.io/downloads.html).
+2. Extract the Terraform executable and add it to your PATH:
+   - Open **System Properties** > **Environment Variables** > **Path** and add the folder containing `terraform.exe`.
+3. **Verify** the installation:
+   ```powershell
+   terraform -version
+   ```
+
+---
+
+### **3. Navigate to the Project Directory**
+
+Once both tools are installed, navigate to your project directory:
 
 ```bash
-/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+cd rev-parallel-cluster/
 ```
-
-**Install AWS CLI**:
-
-1.  Use Homebrew to install AWS CLI:
-
-    ```bash
-    brew install awscli
-    ```
-
-2.  Configure AWS CLI with `aws configure`, using the Access Key ID and Secret Access Key associated with your IAM role.
-    ```bash
-    aws configure
-    ```
-
-**Install Terraform**:
-
-1.  Use Homebrew to install Terraform:
-
-    ```bash
-    brew install terraform
-    ```
-
-2.  Verify the installation with:
-
-    ```bash
-    terraform -version
-    ```
-
-3.  **Navigate to the Project Directory**:  
-    Enter the project directory to start working with Terraform:
-    ```bash
-    cd rev-parallel-cluster/
-    ```
-
-Once you complete these steps, your environment will be ready to work with Terraform.
 
 # Running Terraform Commands
 
@@ -173,49 +189,146 @@ monthly_spend_limit = <insert-monthly-spend-limit>
 post_install_scripts_bucket_name = "<insert-bucket-name-post-install>"
 ```
 
-#### Key Variables
+#### **Key Variables and Their Uses**
 
-1. **Create Unique S3 Bucket Names**:
+1. **`terraform_state_s3_bucket_name`**:
 
-   - **Terraform State S3 Bucket**: Generate a unique name with:
+   - **Purpose**: Stores the Terraform state file, which keeps track of the current state of your infrastructure.
+   - **Explanation**: This bucket name must be unique because S3 bucket names are globally unique across AWS. Storing the Terraform state in S3 allows multiple team members or systems to access and maintain the infrastructure’s state consistently.
+   - **Creation Command**:
      ```bash
      terraform-state-storage-$(uuidgen | tr '[:upper:]' '[:lower:]')
      ```
-   - **Post Install Scripts S3 Bucket**: Create another unique name with:
+
+2. **`subnet_id`**:
+
+   - **Purpose**: Specifies the public subnet where the ParallelCluster and its resources, like EC2 instances, will be deployed.
+   - **Explanation**: This should be a subnet ID in the `us-west-2a` availability zone (or the relevant zone you’re using). The subnet must have internet access for resources that need to communicate externally. In the AWS Console, go to **VPC** > **Subnets** to find an existing subnet or create a new one if necessary.
+
+3. **`parallel_cluster_api_stack_name`**:
+
+   - **Purpose**: Defines the name for the AWS CloudFormation stack that deploys the ParallelCluster API.
+   - **Explanation**: This stack handles the API layer for managing the ParallelCluster. Naming it makes it easy to locate in AWS CloudFormation and ensures it won’t conflict with other stacks. You can leave this as "ParallelCluster" or change it if needed.
+
+4. **`parallel_cluster_api_stack_version`**:
+
+   - **Purpose**: Specifies the version of ParallelCluster you want to use.
+   - **Explanation**: Make sure the version you specify is compatible with any other configurations or dependencies you have. Using the latest stable version (like 3.10.0 here) is recommended unless you need a specific version for compatibility.
+
+5. **`region`**:
+
+   - **Purpose**: Sets the AWS region where all resources, including the ParallelCluster, will be deployed.
+   - **Explanation**: Ensure that this matches the region where your resources (like S3 buckets, subnets, etc.) reside. Here, `us-west-2` is used, but this can be any region depending on where your data and operations are centered.
+
+6. **`sns_alert_emails`**:
+
+   - **Purpose**: A list of email addresses that will receive alerts if the cluster usage exceeds the defined spending limits.
+   - **Explanation**: This should include any email addresses of stakeholders who need to monitor budget usage. AWS Simple Notification Service (SNS) will use this to send alert emails. Add valid email addresses in a list format, for example:
+     ```hcl
+     sns_alert_emails = ["admin@example.com", "finance@example.com"]
+     ```
+
+7. **`spending_alert_threshold`**:
+
+   - **Purpose**: The spending limit that triggers alerts, measured in USD.
+   - **Explanation**: Once the threshold is met, an alert will be sent to the emails in `sns_alert_emails`. Set this to a realistic amount based on expected usage patterns, for example:
+     ```hcl
+     spending_alert_threshold = 500
+     ```
+
+8. **`monthly_spend_limit`**:
+
+   - **Purpose**: Sets the monthly spending limit for the entire ParallelCluster setup.
+   - **Explanation**: If the total usage cost exceeds this amount, it may trigger additional actions or notifications. Set this to align with your monthly budget cap, such as:
+     ```hcl
+     monthly_spend_limit = 1000
+     ```
+
+9. **`post_install_scripts_bucket_name`**:
+   - **Purpose**: The unique bucket used to store post-install scripts that run on EC2 instances during cluster setup.
+   - **Explanation**: These scripts, which could include commands for configuring services like HSDS on EC2 instances, need to be accessible by the cluster upon initialization. Since this bucket stores scripts, it also needs a unique name.
+   - **Creation Command**:
      ```bash
      post-install-bucket-$(uuidgen | tr '[:upper:]' '[:lower:]')
      ```
 
-2. **Set `sns_alert_emails`**:  
-   Include any emails that should receive alerts if the cluster exceeds the budget.
+---
 
-3. **Identify the Subnet ID**:  
-   In the AWS Console, go to **VPC** > **Subnets**. If you're using an existing subnet, copy the subnet ID in the availability zone `us-west-2a`. Alternatively, create a new VPC and subnet as needed.
+#### Example Configuration
+
+Once you have your unique bucket names, email addresses, and budget limits defined, your configuration might look like this:
+
+```hcl
+terraform_state_s3_bucket_name = "terraform-state-storage-123abc456def"
+subnet_id = "subnet-0abcd1234efgh5678"
+parallel_cluster_api_stack_name = "ParallelCluster"
+parallel_cluster_api_stack_version = "3.10.0"
+region = "us-west-2"
+sns_alert_emails = ["admin@example.com", "finance@example.com"]
+spending_alert_threshold = 500   # spending limit for alerts in USD
+monthly_spend_limit = 1000       # monthly spending cap in USD
+post_install_scripts_bucket_name = "post-install-bucket-789ghi012jkl"
+```
+
+Certainly! Here’s a breakdown of each Terraform command and what it does in the context of setting up your infrastructure.
 
 ---
 
-### 4. Run Terraform Commands
+### **Running Terraform Commands**
 
-1. **Initialize and Apply Terraform**:
+#### 1. **Initialize Terraform**
 
-   Run:
+```bash
+terraform init
+```
 
-   ```bash
-     terraform init
+- **Purpose**: Initializes the Terraform working directory by downloading necessary provider plugins and setting up the backend configuration.
+- **Explanation**: This command is essential before running any other Terraform command, as it ensures that Terraform has access to the correct providers (e.g., AWS) and prepares the environment to handle your infrastructure setup.
+
+#### 2. **Preview Changes with `terraform plan`**
+
+```bash
+terraform plan
+```
+
+- **Purpose**: Generates an execution plan that shows you exactly what Terraform will do when you apply changes.
+- **Explanation**: This command is useful for reviewing changes before they’re applied, so you can verify that the planned operations align with your expectations. It provides a preview of resources that will be added, modified, or destroyed without making any changes to actual infrastructure.
+
+#### 3. **Apply Changes to Infrastructure**
+
+```bash
+terraform apply
+```
+
+- **Purpose**: Deploys the infrastructure as specified in the configuration files.
+- **Explanation**: This command applies all defined resources in your Terraform configuration files to the specified environment. After running `terraform apply`, Terraform will prompt for confirmation (unless you pass the `-auto-approve` flag), allowing you to verify the changes one final time. After confirmation, Terraform creates or modifies resources to match the configuration.
+
+---
+
+### **Removing Placeholder Comments**
+
+For the initial run, some code lines need to be commented out to allow Terraform to set up the foundational resources without trying to build dependencies that aren't yet ready. After the initial run is complete, follow these steps to finalize your configuration:
+
+1. **Remove the Placeholder Comments**: Uncomment the lines labeled `# RemoveComment` in your configuration files to enable the dependent resources to be created.
+
+2. **Reinitialize and Apply the Configuration**:
+   - **Re-run `terraform init`** (if necessary) to refresh the environment and ensure Terraform acknowledges the uncommented lines.
+   - **Apply the configuration again** to build the dependent resources:
+     ```bash
      terraform apply
-   ```
+     ```
 
-2. **Remove Placeholder Comments**:  
-   Some configurations may require a second initialization. After the initial setup, remove any comments labeled `# RemoveComment` in your configuration, then re-run:
+This staged approach ensures that Terraform can reference the newly created resources and then proceed to build out the dependent infrastructure.
 
-   ```bash
-   terraform init
-   terraform apply
-   ```
+#### **Example: Replace the S3 Bucket Name**
 
-   Replace this line here https://github.com/switchbox-data/rev-parallel-cluster/blob/main/terraform.tf#L24 with the terraform_state_s3_bucket_name you added in the terraform.tfvars file. This is needed to store the terraform state in a secure private s3 bucket
+- Replace the placeholder with `terraform_state_s3_bucket_name` in the specified line (e.g., [line 24](https://github.com/switchbox-data/rev-parallel-cluster/blob/main/terraform.tf#L24)) in your Terraform configuration file to point to the secure S3 bucket specified in `terraform.tfvars`. This will ensure Terraform’s state is stored securely in your S3 bucket.
 
-If you encounter an error like "`Provider produced inconsistent final plan`," try re-running the command, as some resources may need an additional setup step.
+---
+
+### **Handling Errors like `Provider produced inconsistent final plan`**
+
+If you encounter an error message such as **`Provider produced inconsistent final plan`**, it may be due to dependencies between resources that need to be refreshed or re-evaluated. Simply re-running the command can often resolve this issue, as Terraform will try to re-plan and verify resources before applying changes.
 
 ## Using the ParallelCluster
 
