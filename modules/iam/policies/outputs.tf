@@ -17,7 +17,7 @@ output "s3_readonly_post_install_scripts_policy" {
 }
 
 # Output for s3 post install read policy
-output "s3_full_access_output_files" {
-  value = aws_iam_policy.s3_output_files_full_access_policy
+output "s3_full_access_output_files_policy" {
+  value = aws_iam_policy.s3_output_files_full_access_policy.arn
   description = "Allows access to output files bucket"
 }

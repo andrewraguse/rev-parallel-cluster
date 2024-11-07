@@ -56,7 +56,7 @@ module "parallel_cluster" {
   post_install_bucket = var.post_install_scripts_bucket_name # S3 bucket for post-install scripts
   pass_and_attach_role_policy = module.iam.pass_and_attach_role_policy # Pass role policy for the head node
   s3_readonly_post_install_scripts_policy = module.iam.s3_readonly_post_install_scripts_policy # s3 read policy for compute nodes
-  output_files_bucket_policy = module.iam.s3_full_access_output_files # Pass policy for head node to write output file
+  output_files_bucket_policy = module.iam.s3_full_access_output_files_policy # Pass policy for head node to write output file
 
   # Explicit dependencies to ensure the API stack is created before the cluster
   depends_on = [module.parallel_cluster_api]
