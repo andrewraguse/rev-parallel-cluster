@@ -398,31 +398,11 @@ sudo systemctl status slurmctld
 
 - **Monitor the Job**: Use `squeue` to check job status. If auto-provisioning is enabled, the job will remain in the `CF` (configuring) state until nodes are provisioned. Once running, the status changes to `R`.
 
-### 5. Running the reV Example Jobs
+### 5. Running the reV Jobs
 
-#### Example 1: Single-Node Job
+For detailed instructions on running reV jobs, please refer to the example repo that has information regarding how to use reV with the parallel cluster
 
-Navigate to the example folder and run the first example, which tests single-node functionality:
-
-```bash
-cd rev-parallel-cluster-example-files/example-1
-reV generation -c AWS_test_config_generation.json
-```
-
-- **Monitor Execution**: Check `squeue` for job status and use `reV status` to confirm the job runs without issues.
-- **Check Logs**: If issues occur, especially 503 errors, check the logs under `/logs/stdout/` for details.
-
-#### Example 2: Multi-Node Job
-
-Once single-node functionality is verified, proceed with the multi-node example:
-
-```bash
-cd ../example-2
-reV pipeline config_pipeline.json --monitor
-```
-
-- **Scaling Nodes**: If only one node is active, other nodes may take time to initialize. Monitor using `squeue`.
-- **Retry Failed Jobs**: If any jobs fail, re-running the command will restart any incomplete tasks.
+https://github.com/switchbox-data/rev-parallel-cluster-example-files
 
 ## How to Make Changes to the Cluster
 
@@ -488,6 +468,7 @@ SharedStorage:
 - **Iam Policies**: Sets additional IAM policies. Policies like `AmazonSSMManagedInstanceCore` and `AmazonEC2ContainerRegistryReadOnly` provide permissions for management and container registry access. Modify these policies if there are any specific security or access requirements.
 - **ComputeResources**: Controls compute node resources. The `InstanceType`, `MinCount`, and `MaxCount` control the node type and scaling limits. Increase the `InstanceType` or `MaxCount` to handle more intensive workloads.
 - **SharedStorage**: Defines storage settings, such as EBS volumes. Increasing the EBS `Size` can help if the workload requires more storage.
+- **CapacityType**: Specifies the type of compute nodes to be used in your parallel cluster. Setting this to `SPOT` enables the use of spot instances, which utilize unused compute capacity at a significantly reduced cost—up to 70% less than on-demand instances. Spot instances are quick to provision and are ideal for cost-sensitive workloads. However, they can be reclaimed by AWS when needed for other services, which may interrupt your jobs. In such cases, jobs will either restart or resume from the last saved checkpoint, depending on your configuration.
 
 ### Updating and Redeploying the Cluster
 
