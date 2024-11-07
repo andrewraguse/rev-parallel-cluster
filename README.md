@@ -187,6 +187,7 @@ sns_alert_emails = ["<insert-emails-here>"]
 spending_alert_threshold = <insert-spending-alert-threshold> # spending limit for alerts
 monthly_spend_limit = <insert-monthly-spend-limit>
 post_install_scripts_bucket_name = "<insert-bucket-name-post-install>"
+output_files_bucket_name = "<insert-output-files-bucket-name>"
 ```
 
 #### **Key Variables and Their Uses**
@@ -248,9 +249,19 @@ post_install_scripts_bucket_name = "<insert-bucket-name-post-install>"
    - **Purpose**: The unique bucket used to store post-install scripts that run on EC2 instances during cluster setup.
    - **Explanation**: These scripts, which could include commands for configuring services like HSDS on EC2 instances, need to be accessible by the cluster upon initialization. Since this bucket stores scripts, it also needs a unique name.
    - **Creation Command**:
-     ```bash
-     post-install-bucket-$(uuidgen | tr '[:upper:]' '[:lower:]')
-     ```
+     `bash
+post-install-bucket-$(uuidgen | tr '[:upper:]' '[:lower:]')
+`
+     Here’s a similar setup for `output_files_bucket_name`:
+
+### 10. **`output_files_bucket_name`**
+
+- **Purpose**: A unique bucket used by the head node to upload files to S3 manually after completing a run. This allows easy access and management of output files generated during the run.
+- **Explanation**: The bucket is specifically used for storing files from completed runs, making it easier to retrieve and organize results.
+- **Creation Command**:
+  ```bash
+  output-files-bucket-$(uuidgen | tr '[:upper:]' '[:lower:]')
+  ```
 
 ---
 
@@ -268,9 +279,8 @@ sns_alert_emails = ["admin@example.com", "finance@example.com"]
 spending_alert_threshold = 500   # spending limit for alerts in USD
 monthly_spend_limit = 1000       # monthly spending cap in USD
 post_install_scripts_bucket_name = "post-install-bucket-789ghi012jkl"
+output_files_bucket_name = "output-files-12345"
 ```
-
-Certainly! Here’s a breakdown of each Terraform command and what it does in the context of setting up your infrastructure.
 
 ---
 
