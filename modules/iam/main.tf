@@ -7,6 +7,7 @@ module "iam_groups" {
 module "iam_policies" {
   source = "./policies"  # Reference to policies module
   post_install_scripts_bucket_name = var.post_install_scripts_bucket_name  # Pass bucket name for post install scripts
+  output_files_bucket_name = var.output_files_bucket_name # Pass name for output files bucket
 }
 
 # Module for managing IAM roles

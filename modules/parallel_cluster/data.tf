@@ -8,5 +8,6 @@ data "template_file" "cluster_config" {
     post_install_bucket = var.post_install_bucket # S3 bucket for post-install scripts
     pass_and_attach_role_policy = var.pass_and_attach_role_policy
     s3_readonly_post_install_scripts_policy = var.s3_readonly_post_install_scripts_policy
+    output_files_bucket_policy = var.output_files_bucket_policy
   }
 }

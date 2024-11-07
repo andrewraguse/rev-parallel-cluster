@@ -11,6 +11,7 @@ HeadNode:
     AdditionalIamPolicies:
       - Policy: arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore
       - Policy: ${pass_and_attach_role_policy}
+      - Policy: ${output_files_bucket_policy}
 
 Scheduling:
   Scheduler: slurm

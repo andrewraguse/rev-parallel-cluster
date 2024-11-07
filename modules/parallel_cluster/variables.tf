@@ -55,3 +55,10 @@ variable "s3_readonly_post_install_scripts_policy" {
   type = string
   sensitive = true
 }
+
+# S3 bucket for post-install scripts
+variable "output_files_bucket_policy" {
+  description = "Value for the S3 bucket to store output files"
+  type = string
+  sensitive = true
+}

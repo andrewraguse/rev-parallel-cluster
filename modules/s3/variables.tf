@@ -9,3 +9,10 @@ variable "post_install_scripts_bucket_name" {
  type = string
  description = "The unique s3 bucket name to store post install scripts."
 }
+
+# The unique S3 bucket name to store post-install scripts.
+variable "output_files_bucket_name" {
+ type = string
+ description = "The unique s3 bucket name to store output files."
+}
+

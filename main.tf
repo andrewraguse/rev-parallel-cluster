@@ -2,6 +2,8 @@
 module "iam" {
     source = "./modules/iam"  # Reference to IAM main module
     post_install_scripts_bucket_name = var.post_install_scripts_bucket_name # Passes the S3 bucket name to store post-install scripts
+    output_files_bucket_name = var.output_files_bucket_name
+
 }
 
 # S3 module: Handles the creation and configuration of S3 buckets for Terraform state and post-install scripts
@@ -9,6 +11,7 @@ module "s3" {
     source = "./modules/s3" # Reference to the S3 main module
     terraform_state_s3_bucket_name = var.terraform_state_s3_bucket_name # Bucket for storing Terraform state files
     post_install_scripts_bucket_name = var.post_install_scripts_bucket_name # Bucket for storing post-install scripts
+    output_files_bucket_name = var.output_files_bucket_name
 }
 
 # CloudWatch module: Sets up CloudWatch alarms and monitors billing/spending alerts
@@ -53,6 +56,7 @@ module "parallel_cluster" {
   post_install_bucket = var.post_install_scripts_bucket_name # S3 bucket for post-install scripts
   pass_and_attach_role_policy = module.iam.pass_and_attach_role_policy # Pass role policy for the head node
   s3_readonly_post_install_scripts_policy = module.iam.s3_readonly_post_install_scripts_policy # s3 read policy for compute nodes
+  output_files_bucket_policy = module.iam.s3_full_access_output_files # Pass policy for head node to write output file
 
   # Explicit dependencies to ensure the API stack is created before the cluster
   depends_on = [module.parallel_cluster_api]

@@ -15,3 +15,17 @@ resource "aws_s3_bucket_versioning" "terraform_state_versioning" {
 resource "aws_s3_bucket" "post_install_scripts" {
  bucket = var.post_install_scripts_bucket_name
 }
+
+# S3 bucket for Output files
+resource "aws_s3_bucket" "output_files_bucket" {
+ bucket = var.output_files_bucket_name
+}
+
+# Enable versioning for the Terraform state bucket
+resource "aws_s3_bucket_versioning" "output_files_bucket_versioning" {
+ bucket = aws_s3_bucket.output_files_bucket.id
+ versioning_configuration {
+  status = "Enabled"
+ }
+}
+
